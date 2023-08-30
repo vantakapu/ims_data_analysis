@@ -19,7 +19,7 @@ from preprocess_steps import find_peaks
     
 
 # Access the data from read_data file
-rootdir = "C:\\Users\\ravindhar.vantakapu\\Desktop\\Data_testing\\Series\\Series 5_Pat 15 VK + Pat 21 + 22_28.04.23"
+rootdir = "C:\\Users\\Desktop\\Data_testing\\Series\\Series 5_Pat 15 VK + Pat 21 + 22_28.04.23"
 object = rd.DataProcessor(rootdir)
 raw_df2 = object.process_data()
 raw_df2
