@@ -13,7 +13,7 @@ import read_data as rd
 
 
 
-rootdir = "C:\\Users\\ravindhar.vantakapu\\Desktop\\Data_testing\\Series\\Series 1_Pat11_Pat16_24.03.2023\\IMS 24.03.2023\\Trigger Sample 230324112124"
+rootdir = "C:\\Users\\ravindhar.vantakapu\\Desktop\\Trigger Sample 230324112124"
 processor = rd.DataProcessor(rootdir)
 raw_df = processor.process_data()
 # raw_df2.to_csv('raw.csv')
