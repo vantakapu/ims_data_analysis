@@ -175,8 +175,8 @@ class DataFrameProcessor:
     @staticmethod
     def process_all(raw_df1):
         processed_df = DataFrameProcessor.process_dataframe(raw_df1)
-        heatmap = DataFrameProcessor.plot_heatmap_by_group(processed_df)
         right_side_df = DataFrameProcessor.right_side_data(processed_df)
+        heatmap = DataFrameProcessor.plot_heatmap_by_group(right_side_df)
         baseline_df = DataFrameProcessor.baseline_correction(right_side_df)
         smoothed_df = DataFrameProcessor.smoothing(baseline_df)
 
