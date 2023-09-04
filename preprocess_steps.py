@@ -13,7 +13,7 @@ import read_data as rd
 
 
 
-rootdir = "C:\\Users\\ravindhar.vantakapu\\Desktop\\Trigger Sample 230324112124"
+rootdir = "C:\\Users\\User\\Desktop\\F_IZI\\Combined_data\\Combined_data"
 processor = rd.DataProcessor(rootdir)
 raw_df = processor.process_data()
 # raw_df2.to_csv('raw.csv')
@@ -32,7 +32,7 @@ raw_df2 = raw_df.copy()
 class DataFrameProcessor:
 
     @staticmethod
-    def process_dataframe(df1):
+    def process_dataframe(df1, filter_re_time=240):
         if isinstance(df1.columns, pd.MultiIndex):
             df1.columns = df1.columns.droplevel(1)
         
@@ -45,39 +45,8 @@ class DataFrameProcessor:
         raw_df_trans.index = raw_df_trans.index.to_series().str.split('_group_', expand=True)[0].squeeze()
         final_df = raw_df_trans.rename(columns={0: 'RIP', 1: 'retention_time'})
         final_df['retention_time'] = pd.to_numeric(final_df['retention_time'])
-        final_df = final_df[final_df['retention_time'] <= 240]
+        final_df = final_df[final_df['retention_time'] <= filter_re_time]
         return final_df
-    
-    @staticmethod
-    def plot_heatmap_by_group(df):
-        
-        step = 10
-        df = df.apply(pd.to_numeric)
-        group_indices = df.index.unique()
-
-        for group_index in group_indices:
-            group_df = df.loc[group_index].sort_values(by='retention_time')
-            group_data = group_df.iloc[:, 3:]
-
-            # Plotting the heatmap for the current group
-            plt.figure(figsize=(10, 6))
-            sns.heatmap(group_data, cmap="YlGnBu", cbar=False)  # Use 'jet' colormap
-
-            # Set the labels for x-axis and y-axis
-            plt.xlabel('Spectras')
-            plt.ylabel('Retention Time')
-            
-            # Set the y-axis tick labels as the 'retention_time' values
-            y_ticks = range(1, len(group_df) + 1, step)
-            plt.yticks(range(len(group_df))[::step], y_ticks)
-            
-            
-            # Set the title for the heatmap
-            plt.title(f'Heatmap of Intensity for {group_index}')
-            plt.legend()
-
-            # Display the heatmap
-            plt.show()
 
     
 
@@ -89,6 +58,7 @@ class DataFrameProcessor:
         corrected_df = df.copy()
         corrected_df.iloc[:, 3:] = corrected_df.iloc[:, 3:] - min_intensity
         return corrected_df
+
 
     @staticmethod
     def smoothing(df):
@@ -127,6 +97,41 @@ class DataFrameProcessor:
         new_df.insert(1, 'RIP', rip)
         new_df.insert(2, 'retention_time', retention_time)
         return new_df
+    
+    
+    @staticmethod
+    def plot_heatmap_by_group(df):
+        
+        step = 10
+        df = df.apply(pd.to_numeric)
+        group_indices = df.index.unique()
+
+        for group_index in group_indices:
+            group_df = df.loc[group_index].sort_values(by='retention_time')
+            group_data = group_df.iloc[:, 3:]
+
+            # Plotting the heatmap for the current group
+            plt.figure(figsize=(10, 6))
+            sns.heatmap(group_data, cmap="YlGnBu", cbar=False)  # Use 'jet' colormap
+            
+            
+            
+            
+            # Set the labels for x-axis and y-axis
+            plt.xlabel('Drift time')
+            plt.ylabel('Retention Time')
+            
+            # Set the y-axis tick labels as the 'retention_time' values
+            y_ticks = range(1, len(group_df) + 1, step)
+            plt.yticks(range(len(group_df))[::step], y_ticks)
+            
+            
+            # Set the title for the heatmap
+            plt.title(f'Heatmap of Intensity for {group_index}')
+            plt.legend()
+
+            # Display the heatmap
+            plt.show()
     
     
     @staticmethod
@@ -174,7 +179,7 @@ class DataFrameProcessor:
     
     @staticmethod
     def process_all(raw_df1):
-        processed_df = DataFrameProcessor.process_dataframe(raw_df1)
+        processed_df = DataFrameProcessor.process_dataframe(raw_df1, filter_re_time=220)
         right_side_df = DataFrameProcessor.right_side_data(processed_df)
         heatmap = DataFrameProcessor.plot_heatmap_by_group(right_side_df)
         baseline_df = DataFrameProcessor.baseline_correction(right_side_df)
@@ -188,16 +193,12 @@ class DataFrameProcessor:
         peaks_df = DataFrameProcessor.find_peaks(smoothed_df, neighborhood_size, threshold)
         aligned_df = DataFrameProcessor.align_peaks(peaks_df)
         
-        return heatmap, aligned_df
+        return aligned_df, heatmap
     
 
 
 
+if __name__ == '__main__':
 
-
-
-
-#if __name__ == '__main__':
-    
-find_peaks = DataFrameProcessor.process_all(raw_df2)
-find_peaks
+    find_peaks, heatmap = DataFrameProcessor.process_all(raw_df2)
+    find_peaks
