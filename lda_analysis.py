@@ -181,6 +181,7 @@ if __name__ == '__main__':
     # Use the plotting class for visualization (if required)
     plot_instance = plotting(X, y)
     plot_instance.plots2d()
+    plot_instance.plots3d()
     train_instance.plot_confusion_matrix()  # Plot the confusion matrix
 
 
